@@ -20,6 +20,25 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to a `.env.local` file in the root of your project:
+
+`REPLICATE_API_TOKEN`
+`TMDB_API_KEY`
+
+### How to get your API keys:
+
+1.  **Replicate API Token**: Sign up on [Replicate](https://replicate.com/) and get your API token from the dashboard.
+2.  **TMDb API Key**: Create an account on [The Movie Database (TMDb)](https://www.themoviedb.org/signup) and request an API key from your account settings.
+
+Your `.env.local` file should look like this:
+
+```
+REPLICATE_API_TOKEN=your_replicate_api_token
+TMDB_API_KEY=your_tmdb_api_key
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
