@@ -53,10 +53,10 @@ export default function Home() {
       </h1>
 
       <form className="w-full flex" onSubmit={handleSubmit}>
-        <input
-          type="text"
+        <textarea
           className="flex-grow"
           name="prompt"
+          rows={4}
           placeholder="Enter a prompt to display an image"
         />
         <button className="button" type="submit">
