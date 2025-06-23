@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
+import { useState } from "react";
 
 interface Movie {
   id: number;
@@ -23,7 +23,7 @@ interface Prediction {
   detail?: string;
 }
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 export default function Home() {
   const [actor, setActor] = useState<Actor | null>(null);
@@ -115,10 +115,9 @@ export default function Home() {
       </h1>
 
       <form className="w-full flex" onSubmit={handleSubmit}>
-        <textarea
+        <input
           className="flex-grow"
           name="prompt"
-          rows={4}
           placeholder="Enter a movie star's name to generate a poster"
         />
         <button className="button" type="submit" disabled={loading}>
@@ -166,13 +165,13 @@ export default function Home() {
             <h3 className="text-xl font-bold mb-2">Movie Timeline</h3>
             <ul className="list-disc list-inside">
               {actor.movies
-                .filter((movie) => movie.release_date)
+                .filter(movie => movie.release_date)
                 .sort(
                   (a, b) =>
                     new Date(b.release_date).getTime() -
                     new Date(a.release_date).getTime()
                 )
-                .map((movie) => (
+                .map(movie => (
                   <li key={movie.id}>
                     {movie.title} ({new Date(movie.release_date).getFullYear()})
                   </li>
@@ -183,7 +182,7 @@ export default function Home() {
           <div className="mt-5 text-center">
             <button
               onClick={handleGeneratePoster}
-              className="button" 
+              className="button"
               disabled={generating}
             >
               {generating ? "Generating..." : "Generate Poster"}
