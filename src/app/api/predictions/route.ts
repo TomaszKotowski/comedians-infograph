@@ -42,19 +42,19 @@ export async function POST(request: Request) {
 
   // Select the top 5 most recent movies for the prompt
   const notableMovies = actor.movies
-    .filter((movie) => movie.release_date)
+    .filter(movie => movie.release_date)
     .sort(
       (a, b) =>
         new Date(b.release_date).getTime() - new Date(a.release_date).getTime()
     )
     .slice(0, 5)
-    .map((movie) => movie.title);
+    .map(movie => movie.title);
 
   const prompt = `A cinematic movie poster for the actor ${
     actor.name
   }. The poster should feature a prominent, artistic portrait of ${
     actor.name
-  }. The background should be a subtle, abstract collage representing scenes from their iconic movies, including titles like "${notableMovies.join(
+  }. The background should be a subtle, abstract collage representing scenes only from their iconic movies like "${notableMovies.join(
     '", "'
   )}". The overall style should be modern, dramatic, and visually stunning.`;
 
