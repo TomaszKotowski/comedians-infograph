@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Actor, Movie, Prediction } from "../types";
-import SearchForm from "../components/SearchForm";
 import ActorProfile from "../components/ActorProfile";
 import MovieSelector from "../components/MovieSelector";
 import PosterDisplay from "../components/PosterDisplay";
+import SearchForm from "../components/SearchForm";
+import { Actor, Movie, Prediction } from "../types";
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 export default function Home() {
   const [actor, setActor] = useState<Actor | null>(null);
@@ -22,7 +22,7 @@ export default function Home() {
     e.preventDefault();
     const form = e.currentTarget;
     const formData = new FormData(form);
-    const prompt = formData.get("prompt") as string;
+    const query = formData.get("query") as string;
 
     setLoading(true);
     setError(null);
@@ -31,7 +31,13 @@ export default function Home() {
     setPrediction(null);
 
     try {
-      const response = await fetch(`/api/search?query=${prompt}`);
+      const response = await fetch(`/api/tmdb`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query }),
+      });
       const data = await response.json();
 
       if (response.status !== 200) {
@@ -49,10 +55,10 @@ export default function Home() {
   };
 
   const handleMovieSelection = (movie: Movie) => {
-    setSelectedMovies((prevSelected) => {
-      const isSelected = prevSelected.some((m) => m.id === movie.id);
+    setSelectedMovies(prevSelected => {
+      const isSelected = prevSelected.some(m => m.id === movie.id);
       if (isSelected) {
-        return prevSelected.filter((m) => m.id !== movie.id);
+        return prevSelected.filter(m => m.id !== movie.id);
       } else {
         if (prevSelected.length < 5) {
           return [...prevSelected, movie];

@@ -39,7 +39,10 @@ export async function POST(request: Request) {
     const searchData = await searchResponse.json();
 
     if (searchData.results.length === 0) {
-      return NextResponse.json({ detail: "No results found." }, { status: 404 });
+      return NextResponse.json(
+        { detail: "No results found." },
+        { status: 404 }
+      );
     }
 
     const actor = searchData.results[0];

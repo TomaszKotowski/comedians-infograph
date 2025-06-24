@@ -48,18 +48,45 @@ export async function POST(request: Request) {
         new Date(b.release_date).getTime() - new Date(a.release_date).getTime()
     )
     .slice(0, 5);
-
-  const genericPrompt = `A cinematic movie poster for the actor ${
-    actor.name
-  }. The poster should feature a prominent, artistic portrait of ${
-    actor.name
-  }. The background should be a subtle, abstract collage representing scenes only from their iconic movies like "${notableMovies
+  const notableMoviesTitles = notableMovies
     .map(movie => movie.title)
-    .join(
-      '", "'
-    )}. The overall style should be modern, dramatic, and visually stunning.
-    The poster MUST be easy to read and understand.
-    `;
+    .join(", ");
+
+  // const genericPrompt = `A cinematic movie poster for the actor ${
+  //   actor.name
+  // }. The poster should feature a prominent, artistic portrait of ${
+  //   actor.name
+  // }. The background should be a subtle, abstract collage representing scenes only from their iconic movies like "${notableMovies
+  //   .map(movie => movie.title)
+  //   .join(
+  //     '", "'
+  //   )}. The overall style should be modern, dramatic, and visually stunning.
+  //   The poster MUST be easy to read and understand.
+  //   `;
+
+  //   const genericPrompt = `
+  //   Create a vertical movie poster for ${actor.name}.
+  //   <rules>
+  //   </rules>
+  // - **Portrait**: A prominent, eye-catching portrait of ${actor.name} front and center.
+  // - **Background**: Subtle silhouettes or abstract hints of their notable films: ${notableMoviesTitles}.
+  // - **Style**: Modern, dramatic, and visually stunning. Take into account the style of ${notableMoviesTitles} and most notable scenes from these movies.
+  // - **Text**: Title “${actor.name}” in bold, legible type; optional tagline beneath.
+  // Ensure a cohesive color palette and layout so the poster reads clearly at a glance.
+
+  // In the poster, show ONLY the ${notableMoviesTitles}. Do NOT show any other movies.
+  //   `;
+
+  const genericPrompt = `
+Make a vertical (2:3) movie poster in ${posterStyle} style.
+
+• Central portrait: ${actor.name}, clear and prominent.  
+• Background: subtle, low‑contrast references to ONLY these films: ${notableMoviesTitles}.  
+• Title text: “${actor.name}” in bold, easily readable at the top.  
+
+Example — for guidance only (do not include in output):  
+Star: Will Smith | Films: I, Robot — Glass Plaza chase; Independence Day — White House ruins | Style: hyper‑realistic digital painting
+`;
 
   let prompt = "";
 
@@ -72,7 +99,7 @@ export async function POST(request: Request) {
         )
         .join(" -> ");
       prompt = `A cinematic movie poster for the actor ${actor.name}. The poster should depict a visual timeline of their career, flowing from earliest to most recent of these movies: ${movieTimeline}. For each movie, include a small, artistic representation and a short description of the role. Use a modern, clean color palette with a clear chronological flow.
-        In the poster, show only the ${notableMovies}. Do not show any other movies.
+        In the poster, show ONLY the ${notableMoviesTitles}. Do NOT show any other movies.
       `;
       break;
     case "Mind Map":
@@ -87,6 +114,9 @@ export async function POST(request: Request) {
       break;
   }
 
+  const resultPrompt = `${genericPrompt}\n\n${prompt}`;
+  console.log(resultPrompt);
+
   const options: {
     model: string;
     input: { prompt: string };
@@ -94,7 +124,7 @@ export async function POST(request: Request) {
     webhook_events_filter?: ("start" | "completed")[];
   } = {
     model: "black-forest-labs/flux-schnell",
-    input: { prompt: `${genericPrompt}\n\n${prompt}` },
+    input: { prompt: resultPrompt },
   };
 
   if (WEBHOOK_HOST) {
