@@ -8,6 +8,10 @@ interface PosterDisplayProps {
 }
 
 const PosterDisplay: React.FC<PosterDisplayProps> = ({ prediction, generating }) => {
+  const handleDownload = (imageUrl: string) => {
+    window.open(`/api/download?url=${encodeURIComponent(imageUrl)}`, '_blank');
+  };
+
   if (!generating && !prediction) {
     return (
         <div className="p-4 flex flex-col items-center justify-center text-gray-500">
@@ -26,7 +30,7 @@ const PosterDisplay: React.FC<PosterDisplayProps> = ({ prediction, generating })
           )}
         </div>
       ) : prediction?.output ? (
-        <div>
+        <div className="text-center">
           <div className="image-wrapper flex justify-center">
             <div className="w-full max-w-md">
               <Image
@@ -42,6 +46,12 @@ const PosterDisplay: React.FC<PosterDisplayProps> = ({ prediction, generating })
           <p className="py-3 text-sm opacity-50 text-center">
             status: {prediction.status}
           </p>
+          <button
+            onClick={() => handleDownload(prediction.output![prediction.output!.length - 1])}
+            className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+          >
+            Download Poster
+          </button>
         </div>
       ) : null}
     </div>
