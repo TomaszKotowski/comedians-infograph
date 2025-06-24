@@ -23,7 +23,7 @@ interface Prediction {
   detail?: string;
 }
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 export default function Home() {
   const [actor, setActor] = useState<Actor | null>(null);
@@ -71,10 +71,10 @@ export default function Home() {
   };
 
   const handleMovieSelection = (movie: Movie) => {
-    setSelectedMovies((prevSelected) => {
-      const isSelected = prevSelected.some((m) => m.id === movie.id);
+    setSelectedMovies(prevSelected => {
+      const isSelected = prevSelected.some(m => m.id === movie.id);
       if (isSelected) {
-        return prevSelected.filter((m) => m.id !== movie.id);
+        return prevSelected.filter(m => m.id !== movie.id);
       } else {
         if (prevSelected.length < 5) {
           return [...prevSelected, movie];
@@ -128,8 +128,8 @@ export default function Home() {
   };
 
   return (
-    <main className="container mx-auto p-4 md:p-8 bg-gray-900 text-white min-h-screen">
-      <div className="max-w-2xl mx-auto">
+    <main className="mx-auto p-4 md:p-8 bg-gray-900 text-white min-h-screen">
+      <div className="max-w-2xl md:max-w-5xl mx-auto">
         <h1 className="text-4xl font-bold text-center mb-8">
           Movie Star Poster Generator
         </h1>
@@ -156,17 +156,22 @@ export default function Home() {
         {prediction && (
           <div className="mt-5">
             {prediction.output && (
-              <div className="image-wrapper mt-5">
-                <Image
-                  src={prediction.output[prediction.output.length - 1]}
-                  alt="output"
-                  sizes="100vw"
-                  width={768}
-                  height={768}
-                />
+              <div className="image-wrapper mt-5 flex justify-center">
+                <div className="w-full max-w-2xl">
+                  <Image
+                    src={prediction.output[prediction.output.length - 1]}
+                    alt="output"
+                    sizes="100vw"
+                    width={768}
+                    height={768}
+                    className="w-full h-auto rounded-lg"
+                  />
+                </div>
               </div>
             )}
-            <p className="py-3 text-sm opacity-50">status: {prediction.status}</p>
+            <p className="py-3 text-sm opacity-50 text-center">
+              status: {prediction.status}
+            </p>
           </div>
         )}
 
@@ -187,16 +192,23 @@ export default function Home() {
                     <span className="text-gray-400">No Image</span>
                   </div>
                 )}
-                <h2 className="text-2xl font-bold mt-4 text-center">{actor.name}</h2>
+                <h2 className="text-2xl font-bold mt-4 text-center">
+                  {actor.name}
+                </h2>
               </div>
 
               <div className="md:w-2/3 p-4">
-                <h3 className="text-xl font-semibold mb-2">Select up to 5 movies:</h3>
+                <h3 className="text-xl font-semibold mb-2">
+                  Select up to 5 movies:
+                </h3>
                 <div className="max-h-80 overflow-y-auto border border-gray-700 rounded-lg p-2">
                   <ul className="space-y-2">
-                    {actor.movies.map((movie) => {
-                      const isSelected = selectedMovies.some((m) => m.id === movie.id);
-                      const isDisabled = !isSelected && selectedMovies.length >= 5;
+                    {actor.movies.map(movie => {
+                      const isSelected = selectedMovies.some(
+                        m => m.id === movie.id
+                      );
+                      const isDisabled =
+                        !isSelected && selectedMovies.length >= 5;
 
                       return (
                         <li
@@ -206,7 +218,9 @@ export default function Home() {
                               ? "opacity-50 cursor-not-allowed"
                               : "cursor-pointer hover:bg-gray-700"
                           }`}
-                          onClick={() => !isDisabled && handleMovieSelection(movie)}
+                          onClick={() =>
+                            !isDisabled && handleMovieSelection(movie)
+                          }
                         >
                           <input
                             type="checkbox"
@@ -216,7 +230,8 @@ export default function Home() {
                             className="mr-3 h-5 w-5 rounded text-blue-500 bg-gray-600 border-gray-500 focus:ring-blue-500"
                           />
                           <span>
-                            {movie.title} ({movie.release_date?.substring(0, 4)})
+                            {movie.title} ({movie.release_date?.substring(0, 4)}
+                            )
                           </span>
                         </li>
                       );
@@ -244,4 +259,3 @@ export default function Home() {
     </main>
   );
 }
-
