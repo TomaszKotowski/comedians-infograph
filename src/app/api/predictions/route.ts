@@ -31,7 +31,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const { actor }: { actor: Actor } = await request.json();
+  const { actor, posterStyle }: { actor: Actor; posterStyle: string } =
+    await request.json();
 
   if (!actor) {
     return NextResponse.json(
@@ -40,23 +41,51 @@ export async function POST(request: Request) {
     );
   }
 
-  // Select the top 5 most recent movies for the prompt
   const notableMovies = actor.movies
     .filter(movie => movie.release_date)
     .sort(
       (a, b) =>
         new Date(b.release_date).getTime() - new Date(a.release_date).getTime()
     )
-    .slice(0, 5)
-    .map(movie => movie.title);
+    .slice(0, 5);
 
-  const prompt = `A cinematic movie poster for the actor ${
+  const genericPrompt = `A cinematic movie poster for the actor ${
     actor.name
   }. The poster should feature a prominent, artistic portrait of ${
     actor.name
-  }. The background should be a subtle, abstract collage representing scenes only from their iconic movies like "${notableMovies.join(
-    '", "'
-  )}". The overall style should be modern, dramatic, and visually stunning.`;
+  }. The background should be a subtle, abstract collage representing scenes only from their iconic movies like "${notableMovies
+    .map(movie => movie.title)
+    .join(
+      '", "'
+    )}. The overall style should be modern, dramatic, and visually stunning.
+    The poster MUST be easy to read and understand.
+    `;
+
+  let prompt = "";
+
+  switch (posterStyle) {
+    case "Timeline Flow":
+      const movieTimeline = notableMovies
+        .map(
+          movie =>
+            `${movie.title} (${new Date(movie.release_date).getFullYear()})`
+        )
+        .join(" -> ");
+      prompt = `A cinematic movie poster for the actor ${actor.name}. The poster should depict a visual timeline of their career, flowing from earliest to most recent of these movies: ${movieTimeline}. For each movie, include a small, artistic representation and a short description of the role. Use a modern, clean color palette with a clear chronological flow.
+        In the poster, show only the ${notableMovies}. Do not show any other movies.
+      `;
+      break;
+    case "Mind Map":
+      const movieTitles = notableMovies.map(movie => movie.title).join(", ");
+      prompt = `A creative movie poster for the actor ${actor.name}. The poster should be a mind map of their career, with their portrait at the center. Branching out from the center, create nodes for each of these movies: ${movieTitles}. Each node should have a visual icon and a brief description of their role. The overall design should be interconnected and visually engaging, using a modern, clean color palette.`;
+      break;
+    default:
+      const defaultMovieTitles = notableMovies
+        .map(movie => movie.title)
+        .join('", "');
+      prompt = `A cinematic movie poster for the actor ${actor.name}. The poster should feature a prominent, artistic portrait of ${actor.name}. The background should be a subtle, abstract collage representing scenes only from their iconic movies like "${defaultMovieTitles}". The overall style should be modern, dramatic, and visually stunning.`;
+      break;
+  }
 
   const options: {
     model: string;
@@ -65,7 +94,7 @@ export async function POST(request: Request) {
     webhook_events_filter?: ("start" | "completed")[];
   } = {
     model: "black-forest-labs/flux-schnell",
-    input: { prompt },
+    input: { prompt: `${genericPrompt}\n\n${prompt}` },
   };
 
   if (WEBHOOK_HOST) {
